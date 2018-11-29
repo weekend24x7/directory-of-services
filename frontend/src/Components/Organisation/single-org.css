@@ -11,7 +11,7 @@
 }
 
 .org-card-info h1 {
-  padding: 0 0 .6rem; 
+  padding: 0 0 .6rem;
   font-size: 110%;
 }
 
@@ -24,8 +24,8 @@
   word-break: break-word;
 }
 
-/* .org-process{ 
-  padding-bottom: .5rem; 
+/* .org-process{
+  padding-bottom: .5rem;
 } */
 
 .org-contact div {
@@ -53,7 +53,7 @@
 
 .org-website,
 .org-contact,
-.org-service, 
+.org-service,
 .org-process{
   overflow: hidden;
 }
@@ -71,20 +71,22 @@
 .org-info .detail-button:active,
 .org-info .edit-button {
   background: #1abcd4;
-  color: #fff;  
+  color: #fff;
 }
 
 .org-detail-btn .move-right{
   font-size: 15px;
   color: #1abcd4;
-  left: 73% ;
-  top: 8.1rem;
+  left: -2% ;
+  top: -0.9rem;
   right: 0;
   border-radius: 0;
   background-color: transparent;
-  border: 0;
   box-shadow: 0 0;
   text-transform: inherit;
+  z-index: 100000;
+  padding: 81px;
+    width: 489px;
 }
 
 /* Arrow button  */
@@ -102,8 +104,8 @@
 }
 
 .org-info h6.details-area,
-.org-card-info h6 { 
-  font-size: 85%; 
+.org-card-info h6 {
+  font-size: 85%;
   font-weight: 100;
   color: rgba(0, 0, 0, 0.54);
 }
@@ -122,16 +124,16 @@
   .org-contact{
     grid-template-columns: 1fr;
     grid-gap: .6rem;
-  } 
-  
+  }
+
   .org-info .edit-button {
     padding: 4px;
   }
 
-  .org-website, 
-  .org-contact, 
-  .org-service, 
-  .org-project, 
+  .org-website,
+  .org-contact,
+  .org-service,
+  .org-project,
   .org-process {
     padding-bottom: .3rem;
   }

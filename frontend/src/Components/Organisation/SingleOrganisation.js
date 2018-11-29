@@ -28,16 +28,14 @@ class SingleOrganisation extends Component {
     }
     const uiMessage = 'Add';
     return (
-      <div className="single-org">
+      <div className="single-org" >
         <div className="org-detail-btn">
           <Button
             onClick={this.handleOpen}
             variant="raised"
             size="small"
             className='move-right'
-          >
-          View details <i className="material-icons" > arrow_right_alt </i>
-          </Button>
+          />
         </div>
         <Dialog
           className="org-info"
