@@ -14,8 +14,8 @@
   font-size: 84%;
 }
 
-.org-home_title a { 
-  text-decoration: none; 
+.org-home_title a {
+  text-decoration: none;
   color: rgb(0, 188, 212)
 }
 
@@ -112,11 +112,7 @@ i{ cursor: pointer;}
   top: 0;
 }
 
-div.org-home .org-card-info .org-detail-btn button {
-  top: 9.1rem;
-  right: 0;
-  left: 43%;
-}
+
 
 .clear-postcode i {
   right: 0px;
@@ -142,7 +138,7 @@ div.org-home .org-card-info .edit-button {
 
 .home-btn-search button.btn-search,
 .home-btn-search button.btn-search:hover {
-  background: #1abcd4; 
+  background: #1abcd4;
   border: .5px solid rgb(26, 188, 212);
   padding: 15px;
   width: 100%;
