@@ -45,7 +45,7 @@ class Search extends React.Component {
     const { classes } = this.props;
     return (
       <Grid container spacing={24} className="org-search">
-        <Grid item md={5} xs={12} className="post-code">
+        <Grid item md={5} xs={12} className="post-codesearch">
           <span className="postcode-field">
             <Autosuggest
               theme={{
@@ -62,9 +62,11 @@ class Search extends React.Component {
               renderSuggestionsContainer={helpers.renderSuggestionsContainer}
               getSuggestionValue={helpers.getSuggestionValue}
               renderSuggestion={helpers.renderSuggestion}
+
               inputProps={{
                 classes,
-                placeholder: "Enter postcode or borough...",
+                disableUnderline: 'true',
+                placeholder: "Enter keyword...",
                 name: "postCode",
                 value: this.props.searchInput,
                 onChange: this.props.handlePostCodeChange,
@@ -103,8 +105,9 @@ class Search extends React.Component {
               getSuggestionValue={helpers.getSuggestionValuex}
               renderSuggestion={helpers.renderSuggestionx}
               inputProps={{
+                disableUnderline: 'true',
                 classes,
-                placeholder: "Enter postcode or borough...",
+                placeholder: "Enter postcode ...",
                 name: "postCode",
                 value: this.props.searchInputPostcode,
                 onChange: this.props.handlePostCodeChangeAndBorough,
