@@ -83,11 +83,7 @@ class Search extends React.Component {
                   : "clear-postcode"
               }
               onClick={this.props.clearPostcodeField}
-            >
-              <i className="material-icons" size="small" variant="raised">
-                close
-              </i>
-            </button>
+            />
             <span className="postcode-error">{this.props.postcodeError}</span>
           </span>
 
