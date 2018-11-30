@@ -109,6 +109,17 @@ jobs:
   backend_test:
     docker:
       - image: circleci/node:8.9
+        environment:
+          NODE_ENV: test
+          MAILGUN_API_KEY: 'local'
+          MAILGUN_DOMAIN: 'local'
+          DATABASE_URL: "postgres://dos@localhost:5432/dos"
+
+      - image: circleci/postgres:9.6.2-alpine
+        environment:
+          POSTGRES_USER: dos
+          POSTGRES_DB: dos
+
     steps:
       - checkout
       - run:
@@ -119,7 +130,7 @@ jobs:
           command: cd backend && yarn lint
       - run:
           name: Run unit tests (todo)
-          command: cd backend && ls
+          command: cd backend && npm run test
   backend_deploy:
     docker:
       - image: circleci/node:8.9
