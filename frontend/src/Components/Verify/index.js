@@ -10,14 +10,13 @@ class Verify extends Component{
     super(props, context);
     this.state = {
       success: false,
-      requested: false,
       message:''
     };
   }
 
  componentDidMount() {
   this.props.verified(this.props.match.params.verified)
-  .then(data => this.setState({success: data.success , requested: data.request, message: data.message}))
+  .then(data => this.setState({success: data.success , message: data.message}))
   }
 
   render() {
