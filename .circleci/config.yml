@@ -129,6 +129,9 @@ jobs:
           name: Lint project
           command: cd backend && yarn lint
       - run:
+          name: Run migrations
+          command: cd backend && npm run migrate
+      - run:
           name: Run unit tests (todo)
           command: cd backend && npm run test
   backend_deploy:
