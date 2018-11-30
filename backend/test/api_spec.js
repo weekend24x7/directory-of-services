@@ -3,10 +3,15 @@ import { expect } from 'chai';
 
 import app from '../src/app';
 
+import { seedData } from '../src/controllers/postInitialData'
+
 describe('API testing', () => {
+  before(async () => {
+    await seedData()
+  })
   describe('services', () => {
     let result = null
-    it('should return list of organisation in JSON format', async () => {
+    it('should return list of organisation', async () => {
       result = await request(app)
         .get('/api/service/all')
       expect(result.status).to.eql(200)
