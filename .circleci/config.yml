@@ -38,7 +38,7 @@ workflows:
 jobs:
   frontend_build:
     docker:
-      - image: circleci/node:8.9
+      - image: circleci/node:latest
     working_directory: ~/dos
     steps:
       - checkout
