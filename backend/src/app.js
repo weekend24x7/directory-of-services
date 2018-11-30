@@ -39,4 +39,4 @@ app.use((err, req, res) => {
   res.send('error');
 });
 
-module.exports = app;
+export default app
