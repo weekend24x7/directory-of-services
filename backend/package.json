@@ -11,7 +11,7 @@
     "start-prod": "git pull; pm2 kill; pm2 start --interpreter babel-node bin/www; pm2 logs",
     "lint": "./node_modules/.bin/eslint **/*.js",
     "fix": "find ./node_modules/* -mtime +10950 -exec touch {} \\;",
-    "test": "mocha --timeout 1000 --require babel-register 'test/*.js' --exit"
+    "test": "mocha --timeout 10000 --require babel-register 'test/*.js' --exit"
   },
   "engines": {
     "node": ">=8.0.0"
