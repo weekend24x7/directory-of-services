@@ -9,6 +9,13 @@ module.exports = {
     try {
       const result = await Organisation
         .query()
+        /* TODO Fix relation currently it is throwing
+          WARNING:
+          Duplicate relation "address" in a relation expression.
+          Duplicate relation "service" in a relation expression.
+          Duplicate relation "branch" in a relation expression.
+          You should use "a.[b, c]" instead of "[a.b, a.c]". This will cause an error in objection 2.0
+        */
         .eager('[branch, branch.[address, address.[location] service, service.[categories]] ]')
         .map(data => helpers.flattenBranchData(data));
       return helpers.flattenBranchArrays(result);
