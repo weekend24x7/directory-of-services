@@ -137,6 +137,9 @@ jobs:
       - run:
           name: Run integration tests
           command: cd backend && npm run test
+      - store_artifacts:
+          path: coverage
+
   backend_deploy:
     docker:
       - image: circleci/node:8.9
