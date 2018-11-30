@@ -132,7 +132,10 @@ jobs:
           name: Run migrations
           command: cd backend && npm run migrate
       - run:
-          name: Run unit tests (todo)
+          name: Workaround for bcrypt on circleci
+          command: cd backend && npm rebuild bcrypt --build-from-source
+      - run:
+          name: Run integration tests
           command: cd backend && npm run test
   backend_deploy:
     docker:
