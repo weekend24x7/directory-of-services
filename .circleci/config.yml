@@ -131,12 +131,16 @@ jobs:
       - run:
           name: Run migrations
           command: cd backend && npm run migrate
+          environment:
+            NODE_ENV: test
+            DATABASE_URL: "postgres://dos@localhost:5432/dos"
+
       - run:
-          name: Workaround for bcrypt on circleci
+          name: Rebuild bcrypt
           command: cd backend && npm rebuild bcrypt --build-from-source
       - run:
           name: Run integration tests
-          command: cd backend && npm run test
+          command: cd backend && npm run test:integration
       - store_artifacts:
           path: backend/coverage
 
