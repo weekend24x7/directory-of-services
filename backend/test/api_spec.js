@@ -31,7 +31,7 @@ describe('API testing', () => {
     it('should return an array and have women as category', async () => {
       result = await request(app)
         .get('/api/service/categories')
-      expect(result.body).to.be.a('array').to.have.length(19)
+      expect(result.body).to.be.a('array').to.have.length(18)
       expect(result.body).to.include('Women')
     });
   })
