@@ -9,6 +9,8 @@ describe('API testing', () => {
   let result
   before(async () => {
     result = null
+    // TODO:
+    // await truncateDB()
     await seedData()
   })
   describe('services', () => {
