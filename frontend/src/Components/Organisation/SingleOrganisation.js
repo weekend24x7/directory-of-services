@@ -36,6 +36,14 @@ class SingleOrganisation extends Component {
             size="small"
             className='move-right'
           />
+          <Button
+            onClick={this.handleOpen}
+            variant="raised"
+            size="small"
+            className='move-right-btn'
+          >
+          View More
+          </Button>
         </div>
         <Dialog
           className="org-info"

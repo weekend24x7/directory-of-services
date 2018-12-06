@@ -42,6 +42,12 @@ form div div::before {
   font-weight: 600;
 }
 
+div.org-home .org-card-info .org-detail-btn button {
+  top: -8px;
+  right: 0;
+  left: 43%;
+}
+
 /*  Home search title  */
 .org-home_title h2,
 .org-home_title {
