@@ -3,10 +3,18 @@ import { expect } from 'chai';
 
 import app from '../src/app';
 
+import { seedData } from '../src/controllers/postInitialData'
+
 describe('API testing', () => {
+  let result
+  before(async () => {
+    result = null
+    // TODO:
+    // await truncateDB()
+    await seedData()
+  })
   describe('services', () => {
-    let result = null
-    it('should return list of organisation in JSON format', async () => {
+    it('should return list of organisation', async () => {
       result = await request(app)
         .get('/api/service/all')
       expect(result.status).to.eql(200)
@@ -14,15 +22,22 @@ describe('API testing', () => {
 
       // TODO decode and check if JSON
     });
-
+  })
+  describe('categories', () => {
     it('should return list of categories in JSON format', async () => {
       result = await request(app)
         .get('/api/service/categories')
         .expect('Content-Type', /json/)
         .expect(200)
-      expect(result.body).to.be.a('array');
+    })
+    it('should return an array and have women as category', async () => {
+      result = await request(app)
+        .get('/api/service/categories')
+      expect(result.body).to.be.a('array').to.have.length(18)
+      expect(result.body).to.include('Women')
     });
-
+  })
+  describe('boroughs and areas', () => {
     it('should return list of boroughs in JSON format', async () => {
       result = await request(app)
         .get('/api/service/boroughs')
@@ -62,7 +77,8 @@ describe('API testing', () => {
         .expect(200);
       expect(result.body).to.be.a('array');
     });
-
+  })
+  describe('postcode', () => {
     it('should not save unless correct data has been supplied', async () => {
       const postcode = { lat: 'nw78', long: '657858' };
       result = await request(app)

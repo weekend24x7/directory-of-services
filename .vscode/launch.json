@@ -11,7 +11,7 @@
         "babel-core/register",
         "--full-trace",
         "--timeout",
-        "1000",
+        "10000",
         "--colors",
         "${workspaceFolder}/backend/test/*.js"
       ],

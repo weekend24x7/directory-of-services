@@ -1,91 +1,36 @@
+---
 version: 2
-workflows:
-  version: 2
-  frontend:
-    jobs:
-      - frontend_build
-      - frontend_test:
-          filters:
-            tags:
-              ignore: /^ignore-testing-.*/
-          requires:
-            - frontend_build
-      - frontend_deploy:
-          filters:
-            branches:
-              only:
-                - master
-                - devops
-          requires:
-            - frontend_test
-  backend:
-    jobs:
-      - backend_build
-      - backend_test:
-          filters:
-            tags:
-              ignore: /^ignore-testing-.*/
-          requires:
-            - backend_build
-      - backend_deploy:
-          filters:
-            branches:
-              only:
-                - master
-                - devops
-          requires:
-            - backend_test
 jobs:
-  frontend_build:
+  frontend_build_test:
     docker:
-      - image: circleci/node:8.9
+      - image: circleci/node:8.12.0
     working_directory: ~/dos
     steps:
       - checkout
       - restore_cache:
           keys:
             - yarn-dependencies-{{ checksum "frontend/yarn.lock" }}
-      - run:
-          name: "Checking Versions"
-          command: |
-            node --version
-            npm --version
-      - run:
-          name: Install project dependencies
-          command: cd frontend && yarn --frozen-lockfile
-      - save_cache:
-          key: yarn-dependencies-{{ checksum "frontend/yarn.lock" }}
-          paths:
-            -  ./frontend/node_modules
-  frontend_test:
-    docker:
-      - image: circleci/node:8.9
-    steps:
-      - checkout
+      - setup_remote_docker
       - run:
           name: Install dependencies for lint and test
           command: cd frontend && yarn
       - run:
-          name: Lint project
-          command: cd frontend && yarn lint
+          name: Lint project & run test
+          command: cd frontend && yarn lint && yarn test
       - run:
-          name: Run unit tests
-          command: cd frontend && yarn test
-  frontend_deploy:
-    docker:
-      - image: circleci/node:8.9
-    steps:
-      - checkout
+          name: Set env variables
+          command: echo 'export VERSION=$(echo $CIRCLE_SHA1 | cut -c -7)' >> $BASH_ENV
       - run:
-          name: Install AWS tools
-          command: sudo apt-get -y -qq install awscli
+          name: Docker build frontend
+          command: docker build -t codeyourfuture/directory-of-services-fe:$VERSION --build-arg version=$VERSION ./frontend && docker tag codeyourfuture/directory-of-services-fe:$VERSION codeyourfuture/directory-of-services-fe:latest
       - run:
-          name: Build project
-          command: cd frontend && yarn && yarn build
+          name: Docker login
+          command: docker login -u $DOCKER_USER -p $DOCKER_PASS
       - run:
-          name: Deploy to AWS S3
-          command: .circleci/deploy_frontend.sh
-  backend_build:
+          name: Docker push frontend
+          command: docker push codeyourfuture/directory-of-services-fe
+
+  backend_build_test:
     docker:
       - image: circleci/node:8.9
     working_directory: ~/dos
@@ -94,60 +39,124 @@ jobs:
       - restore_cache:
           keys:
             - yarn-dependencies-{{ checksum "backend/yarn.lock" }}
+      - setup_remote_docker
       - run:
-          name: "Checking Versions"
-          command: |
-            node --version
-            npm --version
+          name: Set env variables
+          command: echo 'export VERSION=$(echo $CIRCLE_SHA1 | cut -c -7)' >> $BASH_ENV
       - run:
           name: Install project dependencies
           command: cd backend && yarn --frozen-lockfile
       - save_cache:
           key: yarn-dependencies-{{ checksum "backend/yarn.lock" }}
           paths:
-            -  ./backend/node_modules
-  backend_test:
-    docker:
-      - image: circleci/node:8.9
-        environment:
-          NODE_ENV: test
-          MAILGUN_API_KEY: 'local'
-          MAILGUN_DOMAIN: 'local'
-          DATABASE_URL: "postgres://dos@localhost:5432/dos"
-
-      - image: circleci/postgres:9.6.2-alpine
-        environment:
-          POSTGRES_USER: dos
-          POSTGRES_DB: dos
-
-    steps:
-      - checkout
+            - ./backend/node_modules
       - run:
           name: Install dependencies for lint and test
-          command: cd backend && yarn
+          command: cd backend && yarn lint && yarn
       - run:
-          name: Lint project
-          command: cd backend && yarn lint
+          name: Rebuild bcrypt
+          command: cd backend && npm rebuild bcrypt --build-from-source
       - run:
-          name: Run migrations
-          command: cd backend && npm run migrate
+          name: Run integration tests
+          command: cd backend && npm run test:integration
+      - store_artifacts:
+          path: backend/coverage
       - run:
-          name: Run unit tests (todo)
-          command: cd backend && npm run test
-  backend_deploy:
+          name: Docker build backend
+          command: docker build -t codeyourfuture/directory-of-services-be:$VERSION --build-arg version=$VERSION ./backend && docker tag codeyourfuture/directory-of-services-be:$VERSION codeyourfuture/directory-of-services-be:latest
+      - run:
+          name: Docker login
+          command: docker login -u $DOCKER_USER -p $DOCKER_PASS
+      - run:
+          name: Docker push backend
+          command: docker push codeyourfuture/directory-of-services-be
+  deploy_staging:
     docker:
-      - image: circleci/node:8.9
+      - image: circleci/python:2.7-jessie
+    working_directory: ~/repo
     steps:
-      - checkout
-      # - run:
-      #     name: Install Python
-      #     command: sudo apt-get install python3-dev python3-setuptools && sudo easy_install3 pip && sudo chown -R $USER:$USER ~/.local/ && export PATH=$PATH:~/.local/bin/
-      # - run:
-      #     name: Install AWS tools
-      #     command: sudo pip install awsebcli --upgrade --user && eb --version
-      # - run:
-      #     name: Build project
-      #     command: cd backend && yarn && yarn build
-      # - run:
-      #     name: Deploy to AWS S3
-      #     command: .circleci/deploy_backend.sh
+      - setup_remote_docker
+      - run:
+          name: Set env variables
+          command: echo 'export VERSION=$(echo $CIRCLE_SHA1 | cut -c -7)' >> $BASH_ENV
+      - run:
+          name: Install awscli
+          command: sudo pip install awscli
+      - run:
+          name: Install kubectl
+          command: |
+            curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+            chmod +x kubectl
+      - run:
+          name: Install gnupg
+          command: sudo apt-get -y install gnupg
+      - run:
+          name: Get kubeconfig
+          command: aws s3 cp s3://$SECRETS_BUCKET/kubectl/config_cyfbot_staging.gpg ./config.gpg
+      - run:
+          name: Decrypt kubeconfig and set KUBECONFIG
+          command: gpg --yes --passphrase="$GPG_KEY" config.gpg
+      - run:
+          name: Update k8s deployments
+          command: |
+            KUBECONFIG=$(pwd)/config ./kubectl -n staging set image deployment/dos-dep-be dos-be=codeyourfuture/directory-of-services-be:$VERSION
+            KUBECONFIG=$(pwd)/config ./kubectl -n staging set image deployment/dos-dep-fe dos-fe=codeyourfuture/directory-of-services-fe:$VERSION
+
+  deploy_production:
+    docker:
+      - image: circleci/python:2.7-jessie
+    working_directory: ~/repo
+    steps:
+      - setup_remote_docker
+      - run:
+          name: Set env variables
+          command: echo 'export VERSION=$(echo $CIRCLE_SHA1 | cut -c -7)' >> $BASH_ENV
+      - run:
+          name: Install awscli
+          command: sudo pip install awscli
+      - run:
+          name: Install kubectl
+          command: |
+            curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+            chmod +x kubectl
+      - run:
+          name: Install gnupg
+          command: sudo apt-get -y install gnupg
+      - run:
+          name: Get kubeconfig
+          command: aws s3 cp s3://$SECRETS_BUCKET/kubectl/config_cyfbot_staging.gpg ./config.gpg
+      - run:
+          name: Decrypt kubeconfig and set KUBECONFIG
+          command: gpg --yes --passphrase="$GPG_KEY" config.gpg
+      - run:
+          name: Update k8s deployments
+          command: |
+            KUBECONFIG=$(pwd)/config ./kubectl -n production set image deployment/dos-dep-be dos-be=codeyourfuture/directory-of-services-be:$VERSION
+            KUBECONFIG=$(pwd)/config ./kubectl -n production set image deployment/dos-dep-fe dos-fe=codeyourfuture/directory-of-services-fe:$VERSION
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - frontend_build_test:
+          context: build
+      - backend_build_test:
+          context: build
+      - deploy_staging:
+          context: deployments_staging
+          requires:
+            - frontend_build_test
+            - backend_build_test
+          filters:
+            branches:
+              only: staging
+      - deploy_production:
+          context: deployments_production
+          requires:
+            - frontend_build_test
+            - backend_build_test
+          filters:
+            branches:
+              only:
+                - master
+                - devops
