@@ -54,6 +54,12 @@ jobs:
           name: Install dependencies for lint and test
           command: cd backend && yarn lint && yarn
       - run:
+          name: Run migrations
+          command: cd backend && npm run migrate
+          environment:
+            NODE_ENV: test
+            DATABASE_URL: "postgres://dos@localhost:5432/dos"
+      - run:
           name: Rebuild bcrypt
           command: cd backend && npm rebuild bcrypt --build-from-source
       - run:
@@ -149,7 +155,8 @@ workflows:
             - backend_build_test
           filters:
             branches:
-              only: staging
+              only:
+                - staging
       - deploy_production:
           context: deployments_production
           requires:
