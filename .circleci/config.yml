@@ -51,14 +51,14 @@ jobs:
           paths:
             - ./backend/node_modules
       - run:
-          name: Install dependencies for lint and test
-          command: cd backend && yarn lint && yarn
-      - run:
           name: Run migrations
           command: cd backend && npm run migrate
           environment:
             NODE_ENV: test
-            DATABASE_URL: "postgres://$STAGING_DATABASE_USERNAME:$STAGING_DATABASE_PASSWORD@small-dbs.internal.codeyourfuture.io:5432/dosdb_staging"
+            DATABASE_URL: "postgres://dos@localhost:5432/dos"
+      - run:
+          name: Install dependencies for lint and test
+          command: cd backend && yarn lint && yarn
       - run:
           name: Rebuild bcrypt
           command: cd backend && npm rebuild bcrypt --build-from-source
