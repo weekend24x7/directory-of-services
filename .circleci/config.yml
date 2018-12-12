@@ -58,7 +58,7 @@ jobs:
           command: cd backend && npm run migrate
           environment:
             NODE_ENV: test
-            DATABASE_URL: "postgres://dos@localhost:5432/dos"
+            DATABASE_URL: "postgres://$STAGING_DATABASE_USERNAME:$STAGING_DATABASE_PASSWORD@small-dbs.internal.codeyourfuture.io:5432/dosdb_staging"
       - run:
           name: Rebuild bcrypt
           command: cd backend && npm rebuild bcrypt --build-from-source
