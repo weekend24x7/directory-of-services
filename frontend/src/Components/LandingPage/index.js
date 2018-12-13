@@ -10,8 +10,8 @@ class LandingPage extends Component {
   state = {
     open: false
   }
-  componentDidMount() {
-    this.props.isAuthenticated && this.props.history.replace('/home')
+  componentWillMount() {
+    if(this.props.isAuthenticated ) this.props.history.replace('/home')
   }
   deleteMessage = () => (
     this.props.messages.map(message =>
