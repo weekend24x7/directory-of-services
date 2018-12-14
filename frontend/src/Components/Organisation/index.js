@@ -113,7 +113,6 @@ class Organisations extends Component {
         if (res.result && res.status === 200) {
           this.setState({ isLoading: true, sort: true });
           res.result.map(async info => {
-            console.log(info)
             const lat = info.latitude;
             const long = info.longitude;
             const getBranches = await this.props.getBranchesFilteredByPostCode({
@@ -173,7 +172,6 @@ class Organisations extends Component {
         if (res.result && res.status === 200) {
           this.setState({ isLoading: true, sort: true });
           res.result.map(async info => {
-            console.log(info)
             const lat = info.latitude;
             const long = info.longitude;
             const getBranches = await this.props.getBranchesFilteredByPostCode({

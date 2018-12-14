@@ -121,8 +121,6 @@ class HomeSearch extends React.Component {
   handleCheck = name => event => {
       this.setState({ [name]: event.target.checked });
       const { categoriesToFilter, organisations } = this.state;
-      console.log(categoriesToFilter)
-
       const indexToRemove = categoriesToFilter.indexOf(name);
       if (indexToRemove > -1) {
         // item found if > -1
@@ -141,9 +139,6 @@ class HomeSearch extends React.Component {
             }
           }
         }
-
-        console.log('cat to filter', categoriesToFilter);
-        console.log(fillterdOrganisations);
       }
       this.setState({ fillterdOrganisations, categoriesToFilter});
       if (categoriesToFilter.length === 0){
@@ -273,14 +268,10 @@ class HomeSearch extends React.Component {
       Traf,Wome, Ment,  anchorEl} = this.state;
     const { role } = this.props;
     let {organisations} = this.state
-    // const OrgList = [AllCat,Hous,Immi].filter(v => v)
-    //   console.log(OrgList)
     const { editIdx, search, postcodeValue, fillterdOrganisations } = this.state;
     if(fillterdOrganisations.length > 0){
       organisations = fillterdOrganisations
     }
-    console.log('1:', organisations);
-
     const params = this.props.location.pathname;
     const isHomeRoute = params && params.includes('home');
 
@@ -294,8 +285,6 @@ class HomeSearch extends React.Component {
     const searchResult = homePageHelper
       .filterData(organisations.sort(this.dataOrder()), search, postcodeValue)
       .map((org, index) => {
-        console.log('org', org);
-
         const currentlyEditing = editIdx === index;
         return currentlyEditing ? (
           <Fragment>
