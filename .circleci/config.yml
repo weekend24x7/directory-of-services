@@ -33,6 +33,17 @@ jobs:
   backend_build_test:
     docker:
       - image: circleci/node:8.9
+        environment:
+          NODE_ENV: test
+          MAILGUN_API_KEY: 'local'
+          MAILGUN_DOMAIN: 'local'
+          DATABASE_URL: "postgres://dos@localhost:5432/dos"
+
+      - image: circleci/postgres:9.6.2-alpine
+        environment:
+          POSTGRES_USER: dos
+          POSTGRES_DB: dos
+      - image: circleci/node:8.9
     working_directory: ~/dos
     steps:
       - checkout
@@ -53,6 +64,12 @@ jobs:
       - run:
           name: Install dependencies for lint and test
           command: cd backend && yarn lint && yarn
+      - run:
+          name: Run migrations
+          command: cd backend && npm run migrate
+          environment:
+            NODE_ENV: test
+            DATABASE_URL: "postgres://dos@localhost:5432/dos"
       - run:
           name: Rebuild bcrypt
           command: cd backend && npm rebuild bcrypt --build-from-source
@@ -149,7 +166,8 @@ workflows:
             - backend_build_test
           filters:
             branches:
-              only: staging
+              only:
+                - staging
       - deploy_production:
           context: deployments_production
           requires:
