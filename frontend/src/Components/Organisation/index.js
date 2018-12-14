@@ -30,8 +30,8 @@ class Organisations extends Component {
     searchInput: "",
     postcodeError: "",
     isLoading: false,
+    isPostcode: false,
     sort: false,
-    isPostcode: false
   };
 
   componentDidMount() {
@@ -147,6 +147,7 @@ class Organisations extends Component {
       });
     }
   };
+
 
   handleKeyUp = async (e) => {
     e.preventDefault();
