@@ -39,7 +39,7 @@ describe('Users API testing', () => {
     expect(result.statusCode).to.equal(200)
   })
 
-  it.skip('Should find a user info by using his/her id', async () => {
+  it('Should find a user info by using his/her id', async () => {
     const result = await request(app).get('/api/users/1')
       .expect('Content-Type', /json/);
     expect(result.body).to.be.a('object')
@@ -90,7 +90,7 @@ describe('Users API testing', () => {
     expect(result.body.success).to.equal(true)
   })
 
-  it.skip('Should delete a user info by using his/her id', async () => {
+  it('Should delete a user info by using his/her id', async () => {
     const result = await request(app).delete('/api/users/1')
       .expect('Content-Type', /json/);
     expect(result.body).to.be.a('object')
@@ -98,7 +98,7 @@ describe('Users API testing', () => {
     expect(result.body.response).to.equal(1)
   })
 
-  it('Should return empty string for user his/her id 1', async () => {
+  it.skip('Should return empty string for user his/her id 1', async () => {
     const result = await request(app).get('/api/users/1')
       .expect('Content-Type', /json/);
     expect(result.body).to.be.a('string')

@@ -11,7 +11,8 @@
     "start-prod": "git pull; pm2 kill; pm2 start --interpreter babel-node bin/www; pm2 logs",
     "lint": "./node_modules/.bin/eslint **/*.js",
     "fix": "find ./node_modules/* -mtime +10950 -exec touch {} \\;",
-    "test": "mocha --timeout 10000 --compilers js:babel-core/register 'test/*.js' --exit"
+    "test": "npm run test:integration",
+    "test:integration": "nyc mocha --timeout 10000 --require babel-register 'test/*.js' --exit"
   },
   "engines": {
     "node": ">=8.0.0"
@@ -19,15 +20,14 @@
   "dependencies": {
     "babel-plugin-transform-object-assign": "^6.22.0",
     "babel-preset-env": "^1.7.0",
-    "babel-register": "^6.26.0",
-    "bcrypt": "^2.0.1",
+    "bcrypt": "^3.0.0",
     "body-parser": "~1.18.2",
     "chai": "^4.1.2",
     "compression": "^1.7.2",
     "cors": "^2.8.4",
     "debug": "~2.6.9",
     "dotenv": "^5.0.1",
-    "express": "~4.15.5",
+    "express": "^4.16.4",
     "express-promise-router": "^3.0.1",
     "faker": "^4.1.0",
     "join-js": "^1.0.0",
@@ -51,12 +51,32 @@
     "babel-eslint": "^8.2.2",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-stage-2": "^6.24.1",
+    "babel-register": "^6.26.0",
     "eslint": "^4.18.1",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-babel": "^5.1.0",
     "eslint-plugin-import": "^2.12.0",
     "mocha": "^5.2.0",
     "nodemon": "^1.15.1",
+    "nyc": "^13.1.0",
     "pm2": "^2.10.4"
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.js"
+    ],
+    "exclude": [
+      "handler.js"
+    ],
+    "extension": [
+      ".js"
+    ],
+    "reporter": [
+      "text",
+      "html"
+    ],
+    "sourceMap": true,
+    "instrument": true,
+    "all": true
   }
 }

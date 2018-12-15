@@ -1,0 +1,23 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Tests (all)",
+      "program": "${workspaceFolder}/backend/node_modules/mocha/bin/_mocha",
+      "args": [
+        "--require",
+        "babel-core/register",
+        "--full-trace",
+        "--timeout",
+        "10000",
+        "--colors",
+        "${workspaceFolder}/backend/test/*.js"
+      ],
+      "envFile": "${workspaceFolder}/backend/.env",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    },
+  ]
+}

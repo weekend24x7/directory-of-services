@@ -173,8 +173,8 @@ router.get('/migrate', async (req, res) => {
 
 router.get('/categories', async (req, res) => {
   try {
-    await getListOfCategories().then(categories =>
-      res.status(200).json(categories));
+    const categories = await getListOfCategories()
+    res.status(200).json(categories)
   } catch (err) {
     res.status(502).json(err);
   }
