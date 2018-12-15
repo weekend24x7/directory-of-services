@@ -148,8 +148,8 @@ jobs:
       - run:
           name: Update k8s deployments
           command: |
-            KUBECONFIG=$(pwd)/config ./kubectl   set image deployment/dos-dep-be dos-be=codeyourfuture/directory-of-services-be:$VERSION
-            KUBECONFIG=$(pwd)/config ./kubectl   set image deployment/dos-dep-fe dos-fe=codeyourfuture/directory-of-services-fe:$VERSION
+            KUBECONFIG=$(pwd)/config ./kubectl  set image deployment/dos-dep-be dos-be=codeyourfuture/directory-of-services-be:$VERSION
+            KUBECONFIG=$(pwd)/config ./kubectl  set image deployment/dos-dep-fe dos-fe=codeyourfuture/directory-of-services-fe:$VERSION
 
 workflows:
   version: 2
