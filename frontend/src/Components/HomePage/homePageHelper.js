@@ -1,7 +1,7 @@
 import helpers from '../../helpers';
 
 // This function check for each organisation if the query enters by the user is include on one of the input field (org_name, borough ...)
-// and return that organisation if at least one input field pass the.
+// and return that organisation if at least one input field pass.
 
 function findOrganisationByCheckingField(orgs, userQuery) {
   const arr            = [];
