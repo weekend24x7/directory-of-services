@@ -144,9 +144,9 @@ workflows:
           context: build
       - deploy_staging:
           context: deployments_staging
-          #requires:
-          #  - frontend_build_test
-          #  - backend_build_test
+          requires:
+            - frontend_build_test
+            - backend_build_test
           filters:
             branches:
               only: staging
