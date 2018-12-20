@@ -11,7 +11,7 @@ function findOrganisationByCheckingField(orgs, userQuery) {
     .map(key => (
       userQuery.map(item => {
         const isKeyValueNumber = typeof (org[key]) !== 'number';
-        const isQueryHasMatch  = isKeyValueNumber ? org[key].toLowerCase().includes(item.toLowerCase()): null;
+        const isQueryHasMatch = isKeyValueNumber && org[key] !== null && org[key].toLowerCase().includes(item.toLowerCase())
         if (isQueryHasMatch && !excludedFields.includes(key)) {
           arr.push(org);
         }

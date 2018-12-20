@@ -30,8 +30,8 @@ class Organisations extends Component {
     searchInput: "",
     postcodeError: "",
     isLoading: false,
-    sort: false,
     isPostcode: false,
+    sort: false,
     searchInputPostcode: "",
   };
 
@@ -197,7 +197,6 @@ class Organisations extends Component {
 
 
   };
-
 
 
   handleKeyUp = async (e) => {
