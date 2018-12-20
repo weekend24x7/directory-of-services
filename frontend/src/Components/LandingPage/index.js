@@ -7,34 +7,35 @@ import './landing-page.css';
 import FlashMessagesNotification from '../FlashMessages'
 
 class LandingPage extends Component {
-
   state = {
     open: false
   }
-
+  componentWillMount() {
+    if(this.props.isAuthenticated ) this.props.history.replace('/home')
+  }
   deleteMessage = () => (
-    this.props.messages.map(message => 
-      message.type === 'loginError' ? 
-      this.props.deleteFlashMessage(message.id) : null
-  ));
+    this.props.messages.map(message =>
+      message.type === 'loginError' ?
+        this.props.deleteFlashMessage(message.id) : null
+    ));
 
   showSignUpForm = () => (
     <LoginForm />
   )
 
   renderMessages = () => (
-    this.props.messages.map(message => 
-      message.type === 'loginError' ? 
+    this.props.messages.map(message =>
+      message.type === 'loginError' ?
         <Fragment key={message.id}>
-          <FlashMessagesNotification 
-            messageType='error' 
-            message={message.text} 
+          <FlashMessagesNotification
+            messageType='error'
+            message={message.text}
             test={this.props.messages}
-            deleteMessage={this.deleteMessage} 
+            deleteMessage={this.deleteMessage}
           />
         </Fragment>
-      : null
-  ))
+        : null
+    ))
 
   renderSignUpPage = (e) => {
     e.preventDefault()
@@ -57,8 +58,10 @@ class LandingPage extends Component {
 }
 
 function mapStateToProps(state) {
+  const { isAuthenticated } = state.loginAuth
   return {
     messages: state.flashMessages,
+    isAuthenticated
   };
 }
 
