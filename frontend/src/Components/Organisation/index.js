@@ -30,8 +30,8 @@ class Organisations extends Component {
     searchInput: "",
     postcodeError: "",
     isLoading: false,
+    isPostcode: false,
     sort: false,
-    isPostcode: false
   };
 
   componentDidMount() {
@@ -113,7 +113,6 @@ class Organisations extends Component {
         if (res.result && res.status === 200) {
           this.setState({ isLoading: true, sort: true });
           res.result.map(async info => {
-            console.log(info)
             const lat = info.latitude;
             const long = info.longitude;
             const getBranches = await this.props.getBranchesFilteredByPostCode({
@@ -149,6 +148,7 @@ class Organisations extends Component {
     }
   };
 
+
   handleKeyUp = async (e) => {
     e.preventDefault();
     if (e.charCode === 13 || e.key === 'Enter') {
@@ -173,7 +173,6 @@ class Organisations extends Component {
         if (res.result && res.status === 200) {
           this.setState({ isLoading: true, sort: true });
           res.result.map(async info => {
-            console.log(info)
             const lat = info.latitude;
             const long = info.longitude;
             const getBranches = await this.props.getBranchesFilteredByPostCode({

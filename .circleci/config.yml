@@ -83,7 +83,7 @@ jobs:
           command: docker build -t codeyourfuture/directory-of-services-be:$VERSION --build-arg version=$VERSION ./backend && docker tag codeyourfuture/directory-of-services-be:$VERSION codeyourfuture/directory-of-services-be:latest
       - run:
           name: Docker login
-          command: docker login -u $DOCKER_USER -p $DOCKER_PASS
+          command: echo "$DOCKER_PASS" | docker login -u $DOCKER_USER --password-stdin
       - run:
           name: Docker push backend
           command: docker push codeyourfuture/directory-of-services-be
