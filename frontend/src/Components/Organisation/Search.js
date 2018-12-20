@@ -3,10 +3,6 @@ import { connect } from "react-redux";
 import Button from "material-ui/Button";
 import PropTypes from "prop-types";
 import Grid from "material-ui/Grid";
-import { InputLabel } from "material-ui/Input";
-import { MenuItem } from "material-ui/Menu";
-import { FormControl } from "material-ui/Form";
-import Select from "material-ui/Select";
 import Autosuggest from "react-autosuggest";
 import { withStyles } from "material-ui/styles";
 import "react-select/dist/react-select.css";
@@ -14,46 +10,6 @@ import helpers from "../../helpers";
 import searchStyle from "./searchStyle";
 import "./search.css";
 import { getOrganisationsList } from '../../actions/getApiData';
-
-
-const days = [
-  {
-    id: 1,
-    day: "Monday"
-  },
-  {
-    id: 2,
-    day: "Tuesday"
-  },
-  {
-    id: 3,
-    day: "Wednesday"
-  },
-  {
-    id: 4,
-    day: "Thursday"
-  },
-  {
-    id: 5,
-    day: "Friday"
-  },
-  {
-    id: 6,
-    day: "Saturday"
-  },
-  {
-    id: 7,
-    day: "Sunday"
-  },
-  {
-    id: 8,
-    day: "Mon-Fri"
-  },
-  {
-    id: 9,
-    day: "All"
-  }
-];
 
 class Search extends React.Component {
   state = {
@@ -89,7 +45,7 @@ class Search extends React.Component {
     const { classes } = this.props;
     return (
       <Grid container spacing={24} className="org-search">
-        <Grid item md={5} xs={12} className="post-code">
+        <Grid item md={5} xs={12} className="post-codesearch">
           <span className="postcode-field">
             <Autosuggest
               theme={{
@@ -106,13 +62,15 @@ class Search extends React.Component {
               renderSuggestionsContainer={helpers.renderSuggestionsContainer}
               getSuggestionValue={helpers.getSuggestionValue}
               renderSuggestion={helpers.renderSuggestion}
+
               inputProps={{
                 classes,
-                placeholder: "Enter postcode or borough...",
+                disableUnderline: 'true',
+                placeholder: "Enter keyword...",
                 name: "postCode",
                 value: this.props.searchInput,
                 onChange: this.props.handlePostCodeChange,
-                onKeyUp: this.props.handleKeyUp
+                onKeyUp: this.props.handlePostcodeSearchKeyUp
               }}
             />
             <button
@@ -125,46 +83,61 @@ class Search extends React.Component {
                   : "clear-postcode"
               }
               onClick={this.props.clearPostcodeField}
+            />
+            <span className="postcode-error">{this.props.postcodeError}</span>
+          </span>
+
+        </Grid>
+        <Grid item md={5} xs={12} className="post-code">
+          <span className="postcode-field">
+            <Autosuggest
+
+              className="post-code-suggesition"
+              renderInputComponent={helpers.renderInputx}
+              suggestions={this.state.suggestions}
+              onSuggestionsFetchRequested={this.handleSuggestionsFetchRequested}
+              onSuggestionsClearRequested={this.handleSuggestionsClearRequested}
+              renderSuggestionsContainer={helpers.renderSuggestionsContainerx}
+              getSuggestionValue={helpers.getSuggestionValuex}
+              renderSuggestion={helpers.renderSuggestionx}
+              inputProps={{
+                disableUnderline: 'true',
+                classes,
+                placeholder: "Enter postcode ...",
+                name: "postCode",
+                value: this.props.searchInputPostcode,
+                onChange: this.props.handlePostCodeChangeAndBorough,
+                onKeyUp: this.props.handlePostcodeSearchKeyUp
+              }}
+            />
+            <button
+              variant="raised"
+              size="small"
+              color="secondary"
+              className={
+                !this.props.isPostcode || this.props.searchInputPostcode.length < 1
+                  ? "hidden"
+                  : "hidden"
+              }
+              onClick={this.props.clearPostcodeField}
             >
               <i className="material-icons" size="small" variant="raised">
                 close
               </i>
             </button>
-            <span className="postcode-error">{this.props.postcodeError}</span>
+
           </span>
+
           <Button
             variant="fab"
             mini
             color="secondary"
-            onClick={this.props.handlePostSearch}
+            onClick={this.props.handlePostCodeSearch}
             aria-label="add"
             className="search-button"
           >
             <i className="material-icons">search</i>
           </Button>
-        </Grid>
-        <Grid item md={4} xs={12} className="day">
-          <FormControl className={classes.formControl}>
-            <InputLabel htmlFor="age-simple">Day</InputLabel>
-            <Select
-              className="select-field-container day-small-screen"
-              value={this.props.day}
-              onChange={this.props.handleSelectedDay}
-              inputProps={{
-                name: "day",
-                id: "day"
-              }}
-            >
-              <MenuItem value="">
-                <em>Any Day</em>
-              </MenuItem>
-              {days.map(day => (
-                <MenuItem key={day.id} value={day.day}>
-                  {day.day}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
         </Grid>
       </Grid>
     );

@@ -42,6 +42,11 @@ form div div::before {
   font-weight: 600;
 }
 
+div.org-home .org-card-info .org-detail-btn button {
+  top: -8px;
+  right: 0;
+  left: 43%;
+}
 div.org-home_title > button{
   color: rgb(26, 188, 212);
   font-size: 1.5em;
@@ -50,8 +55,6 @@ div.org-home_title > button{
   margin-inline-start: 0px;
   margin-inline-end: 0px;
   font-weight: bold;
-  top: -29px;
-  right: 183px;
 }
 
 .fieldControl{
@@ -138,11 +141,7 @@ i{ cursor: pointer;}
   top: 0;
 }
 
-div.org-home .org-card-info .org-detail-btn button {
-  top: 9.1rem;
-  right: 0;
-  left: 43%;
-}
+
 
 .clear-postcode i {
   right: 0px;
