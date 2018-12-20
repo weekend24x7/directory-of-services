@@ -25,7 +25,7 @@ jobs:
           command: docker build -t codeyourfuture/directory-of-services-fe:$VERSION --build-arg version=$VERSION ./frontend && docker tag codeyourfuture/directory-of-services-fe:$VERSION codeyourfuture/directory-of-services-fe:latest
       - run:
           name: Docker login
-          command: docker login -u $DOCKER_USER -p $DOCKER_PASS
+          command: echo "$DOCKER_PASS" | docker login -u $DOCKER_USER --password-stdin
       - run:
           name: Docker push frontend
           command: docker push codeyourfuture/directory-of-services-fe
@@ -83,7 +83,7 @@ jobs:
           command: docker build -t codeyourfuture/directory-of-services-be:$VERSION --build-arg version=$VERSION ./backend && docker tag codeyourfuture/directory-of-services-be:$VERSION codeyourfuture/directory-of-services-be:latest
       - run:
           name: Docker login
-          command: docker login -u $DOCKER_USER -p $DOCKER_PASS
+          command: echo "$DOCKER_PASS" | docker login -u $DOCKER_USER --password-stdin
       - run:
           name: Docker push backend
           command: docker push codeyourfuture/directory-of-services-be
@@ -141,15 +141,15 @@ jobs:
           command: sudo apt-get -y install gnupg
       - run:
           name: Get kubeconfig
-          command: aws s3 cp s3://$SECRETS_BUCKET/kubectl/config_cyfbot_staging.gpg ./config.gpg
+          command: aws s3 cp s3://$SECRETS_BUCKET/kubectl/config_cyfbot.gpg ./config.gpg
       - run:
           name: Decrypt kubeconfig and set KUBECONFIG
           command: gpg --yes --passphrase="$GPG_KEY" config.gpg
       - run:
           name: Update k8s deployments
           command: |
-            KUBECONFIG=$(pwd)/config ./kubectl -n production set image deployment/dos-dep-be dos-be=codeyourfuture/directory-of-services-be:$VERSION
-            KUBECONFIG=$(pwd)/config ./kubectl -n production set image deployment/dos-dep-fe dos-fe=codeyourfuture/directory-of-services-fe:$VERSION
+            KUBECONFIG=$(pwd)/config ./kubectl  set image deployment/dos-dep-be dos-be=codeyourfuture/directory-of-services-be:$VERSION
+            KUBECONFIG=$(pwd)/config ./kubectl  set image deployment/dos-dep-fe dos-fe=codeyourfuture/directory-of-services-fe:$VERSION
 
 workflows:
   version: 2
@@ -169,7 +169,7 @@ workflows:
               only:
                 - staging
       - deploy_production:
-          context: deployments_production
+          context: deployments
           requires:
             - frontend_build_test
             - backend_build_test

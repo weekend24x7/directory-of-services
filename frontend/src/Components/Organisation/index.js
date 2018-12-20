@@ -30,8 +30,9 @@ class Organisations extends Component {
     searchInput: "",
     postcodeError: "",
     isLoading: false,
+    isPostcode: false,
     sort: false,
-    isPostcode: false
+    searchInputPostcode: "",
   };
 
   componentDidMount() {
@@ -58,7 +59,26 @@ class Organisations extends Component {
   handleSelectedDay = event => {
     this.setState({ day: event.target.value });
   };
-
+  findOrganisationByLocation= (orgs, userQuery) => {
+    const location = userQuery.trim().split(' ');
+    const arr      = [];
+    orgs.filter(org => (
+      Object.keys(org)
+      .map(key => (
+        location.map(item => {
+          const isKeyValueNumber = typeof (org[key]) !== 'number';
+          const isQueryHasMatch  = isKeyValueNumber ? org[key].toLowerCase().includes(item.toLowerCase()): null;
+          if (isQueryHasMatch &&
+            (key === 'borough' || key === 'area' || key === 'org_name') &&
+            org[key].toLowerCase().includes(item.toLowerCase())) {
+            arr.push(org);
+          }
+          return arr;
+        })
+      ))
+    ))
+    return [...new Set(arr)];
+  }
   handleSelectedBorough = event => {
     this.setState({ borough: event.target.value });
   };
@@ -78,33 +98,53 @@ class Organisations extends Component {
   };
 
   handlePostCodeChange = (event, { newValue }) => {
-    this.handlePostSearch(event, newValue)
-    this.clearPostcodeField()
     this.setState(
       {
         organisations: this.props.organisation,
         searchInput: newValue,
-        isPostcode: true
+        isPostcode: true,
+      },
+      this.filterByPostcode(newValue)
+    );
+  };
+  handlePostCodeChangeAndBorough = (event, { newValue }) => {
+    this.setState(
+      {
+        organisations: this.props.organisation,
+        isPostcode: true,
+        searchInputPostcode: newValue,
       },
       this.filterByPostcode(newValue)
     );
   };
 
-  handlePostSearch = async (event) => {
+  handlePostCodeSearch = async (event) => {
     event.preventDefault();
-    const { searchInput } = this.state;
-    const isAlphaNumeric = helpers.isAlphaNumeric(searchInput);
+    const { searchInputPostcode } = this.state;
+    const { searchInput } = this.state
+    const isAlphaNumeric = helpers.isAlphaNumeric(searchInputPostcode);
     if (isAlphaNumeric) {
-      if (searchInput.length === 0) {
+      if (searchInputPostcode.length === 0) {
         this.setState({ postcodeError: "Postcode is required *" });
-      } else if (searchInput.length < 5) {
+      } else if (searchInputPostcode.length < 5) {
         this.setState({ postcodeError: "You have to inter valid postcode" });
       } else {
+        if (searchInput.length !== 0){
+          event.preventDefault();
+          const search = searchInput;
+            this.setState({
+              organisations: this.findOrganisationByLocation(
+                this.state.organisations,
+                search
+              ),
+              isPostcode: false
+            });
+        }
         const category = helpers.addSpaceToCategName(
           categoriesData,
           this.props.match.url
         )[0];
-        const post = searchInput.replace(/[' ']/g, "");
+        const post = searchInputPostcode.replace(/[' ']/g, "");
         this.setState({ isLoading: true, postcodeError: "" });
         const data = await fetch(
           `https://api.postcodes.io/postcodes/?q=${post}`
@@ -113,7 +153,6 @@ class Organisations extends Component {
         if (res.result && res.status === 200) {
           this.setState({ isLoading: true, sort: true });
           res.result.map(async info => {
-            console.log(info)
             const lat = info.latitude;
             const long = info.longitude;
             const getBranches = await this.props.getBranchesFilteredByPostCode({
@@ -127,7 +166,11 @@ class Organisations extends Component {
               const orgs = branchs.data;
               return orgsData.push({ distance, ...orgs });
             });
-            this.setState({ organisations: orgsData });
+            this.setState({ organisations: this.findOrganisationByLocation(
+              orgsData,
+              searchInput
+            ),
+            isPostcode: false });
           });
           this.setState({ isLoading: false });
         } else {
@@ -137,34 +180,47 @@ class Organisations extends Component {
           });
         }
       }
-    } else {
-      const search = searchInput;
-      this.setState({
-        organisations: homeSearchHelpers.findOrganisationByLocation(
-          this.state.organisations,
-          search
-        ),
-        isPostcode: false
-      });
     }
+
+    else if (searchInput.length !== 0){
+      event.preventDefault();
+      const search = searchInput;
+    ;
+        this.setState({
+          organisations: this.findOrganisationByLocation(
+            this.state.organisations,
+            search
+          ),
+          isPostcode: false
+        });
+    }
+
+
   };
 
+
   handleKeyUp = async (e) => {
-    e.preventDefault();
+
     if (e.charCode === 13 || e.key === 'Enter') {
-      const { searchInput } = this.state;
-    const isAlphaNumeric = helpers.isAlphaNumeric(searchInput);
+    const { searchInput } = this.state;
+    const { searchInputPostcode } = this.state;
+
+    e.preventDefault();
+
+    const isAlphaNumeric = helpers.isAlphaNumeric(searchInputPostcode);
     if (isAlphaNumeric) {
-      if (searchInput.length === 0) {
+      if (searchInputPostcode.length === 0) {
         this.setState({ postcodeError: "Postcode is required *" });
-      } else if (searchInput.length < 5) {
+      } else if (searchInputPostcode.length < 5) {
         this.setState({ postcodeError: "You have to inter valid postcode" });
       } else {
+
         const category = helpers.addSpaceToCategName(
           categoriesData,
           this.props.match.url
         )[0];
-        const post = searchInput.replace(/[' ']/g, "");
+
+        const post = searchInputPostcode.replace(/[' ']/g, "");
         this.setState({ isLoading: true, postcodeError: "" });
         const data = await fetch(
           `https://api.postcodes.io/postcodes/?q=${post}`
@@ -173,7 +229,6 @@ class Organisations extends Component {
         if (res.result && res.status === 200) {
           this.setState({ isLoading: true, sort: true });
           res.result.map(async info => {
-            console.log(info)
             const lat = info.latitude;
             const long = info.longitude;
             const getBranches = await this.props.getBranchesFilteredByPostCode({
@@ -181,15 +236,36 @@ class Organisations extends Component {
               lat,
               long
             });
+
             const orgsData = [];
             getBranches.data.map(branchs => {
               const { distance } = branchs;
               const orgs = branchs.data;
               return orgsData.push({ distance, ...orgs });
             });
-            this.setState({ organisations: orgsData });
+
+            if(searchInput !== ""){
+              const search = searchInput;
+              this.setState({
+                organisations: homeSearchHelpers.findOrganisationByLocation(
+                  this.state.organisations,
+                  search
+                ),
+                isPostcode: false
+              });
+            }
+            this.setState({ organisations: this.findOrganisationByLocation(
+              orgsData,
+              searchInput
+            ),
+            isPostcode: false });
           });
           this.setState({ isLoading: false });
+          this.setState({ organisations: this.findOrganisationByLocation(
+            this.state.organisations,
+            searchInput
+          ),
+          isPostcode: false });
         } else {
           this.setState({
             postcodeError: "Your postcode is incorrect",
@@ -197,16 +273,104 @@ class Organisations extends Component {
           });
         }
       }
-    } else {
-      const search = searchInput;
-      this.setState({
-        organisations: homeSearchHelpers.findOrganisationByLocation(
-          this.state.organisations,
-          search
-        ),
-        isPostcode: false
-      });
     }
+    else{
+      e.preventDefault();
+
+        const search = searchInput;
+        this.setState({
+          organisations: homeSearchHelpers.findOrganisationByLocation(
+            this.state.organisations,
+            search
+          ),
+          isPostcode: false
+        });
+    }
+
+    }
+  }
+  handlePostcodeSearchKeyUp = async (e) => {
+    e.preventDefault();
+    if (e.charCode === 13 || e.key === 'Enter') {
+      e.preventDefault();
+      const { searchInputPostcode } = this.state;
+      const { searchInput } = this.state
+      const isAlphaNumeric = helpers.isAlphaNumeric(searchInputPostcode);
+      if (isAlphaNumeric) {
+        if (searchInputPostcode.length === 0) {
+          this.setState({ postcodeError: "Postcode is required *" });
+        } else if (searchInputPostcode.length < 5) {
+          this.setState({ postcodeError: "You have to inter valid postcode" });
+        } else {
+          if (searchInput.length !== 0){
+            e.preventDefault();
+            const search = searchInput;
+          ;
+              this.setState({
+                organisations: this.findOrganisationByLocation(
+                  this.state.organisations,
+                  search
+                ),
+                isPostcode: false
+              });
+          }
+          const category = helpers.addSpaceToCategName(
+            categoriesData,
+            this.props.match.url
+          )[0];
+          const post = searchInputPostcode.replace(/[' ']/g, "");
+          this.setState({ isLoading: true, postcodeError: "" });
+          const data = await fetch(
+            `https://api.postcodes.io/postcodes/?q=${post}`
+          );
+          const res = await data.json();
+          if (res.result && res.status === 200) {
+            this.setState({ isLoading: true, sort: true });
+            res.result.map(async info => {
+              const lat = info.latitude;
+              const long = info.longitude;
+              const getBranches = await this.props.getBranchesFilteredByPostCode({
+                category,
+                lat,
+                long
+              });
+              const orgsData = [];
+              getBranches.data.map(branchs => {
+                const { distance } = branchs;
+                const orgs = branchs.data;
+                return orgsData.push({ distance, ...orgs });
+              });
+
+
+              this.setState({ organisations: this.findOrganisationByLocation(
+                orgsData,
+                searchInput
+              ),
+              isPostcode: false });
+            });
+            this.setState({ isLoading: false });
+          } else {
+            this.setState({
+              postcodeError: "Your postcode is incorrect",
+              isLoading: false
+            });
+          }
+        }
+      }
+
+      else if (searchInput.length !== 0){
+        e.preventDefault();
+        const search = searchInput;
+      ;
+          this.setState({
+            organisations: this.findOrganisationByLocation(
+              this.state.organisations,
+              search
+            ),
+            isPostcode: false
+          });
+      }
+
     }
   }
 
@@ -257,14 +421,17 @@ class Organisations extends Component {
           borough={borough}
           day={day}
           searchInput={searchInput}
+          searchInputPostcode={this.state.searchInputPostcode}
           handleSelectedDay={this.handleSelectedDay}
           handleSelectedBorough={this.handleSelectedBorough}
           handlePostCodeChange={this.handlePostCodeChange}
-          handlePostSearch={this.handlePostSearch}
           postcodeError={this.state.postcodeError}
           clearPostcodeField={this.clearPostcodeField}
           isPostcode={this.state.isPostcode}
           handleKeyUp={this.handleKeyUp}
+          handlePostCodeChangeAndBorough={this.handlePostCodeChangeAndBorough}
+          handlePostCodeSearch={this.handlePostCodeSearch}
+          handlePostcodeSearchKeyUp={this.handlePostcodeSearchKeyUp}
         />
         <Grid container className="organisation-page" spacing={24} wrap="wrap">
           {orgHelpers
