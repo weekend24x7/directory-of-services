@@ -147,22 +147,35 @@ router.post('/verified/:verify', async (req, res) => {
   const { verify } = req.params;
   try {
     const response = await getUsersByVerified(verify);
-    const verifiedDB = await response[0].verified
+    const verifiedDB = await response[0].verification_code
     const requested = await response[0].hasRequestedEditor
+    const role = await response[0].role
     if (verify && requested === false) {
       await updateUserbyVerified(verify, {
         hasRequestedEditor: true
       })
       res.status(200).json({
-        request: false, // this is to make sure the user has already requested
+        request: requested, // this is to make sure the user has already requested
         success: true,
-        message: 'Your email has been verified'
+        message: 'Your email has been verified.'
       });
-    } else if (verifiedDB === verify && requested === true) {
+    } else if (verifiedDB === verify && requested && role === null) {
       res.status(200).json({
-        request: true,
+        request: requested,
         success: true,
-        message: 'Your request has been already send to the admin'
+        message: 'Your email has been verified. We are waiting for the approval from the admins.'
+      });
+    }else if (verifiedDB === verify && role === 'Editor' ) {
+      res.status(200).json({
+        request: requested,
+        success: true,
+        message: 'Your request to become an editor has been approved. Please log out and log in again.'
+      });
+    }else if (verifiedDB === verify && role === 'Admin' ) {
+      res.status(200).json({
+        request: requested,
+        success: true,
+        message: 'Your request to become an admin has been approved. Please log out and log in again.'
       });
     }
   } catch (err) {
