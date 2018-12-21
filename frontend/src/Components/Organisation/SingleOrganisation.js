@@ -31,19 +31,17 @@ class SingleOrganisation extends Component {
     return (
       <div className="single-org" >
         <div className="org-detail-btn">
-        <Button
-            onClick={this.handleOpen}
-            variant="raised"
-            size="small"
-            className={window.location.href.indexOf('home') !== -1  ? 'move-right-home-hidden' : 'move-right-org-hidden' }
-          >
-
-          </Button>
           <Button
             onClick={this.handleOpen}
             variant="raised"
             size="small"
-            className={window.location.href.indexOf('home') !== -1  ? 'move-right-home' : 'move-right-org' }
+            className={window.location.href.indexOf('home') !== -1  ? 'move-right-home-hidden' : 'move-right-org-hidden'}
+          />
+          <Button
+            onClick={this.handleOpen}
+            variant="raised"
+            size="small"
+            className={window.location.href.indexOf('home') !== -1  ? 'move-right-home' : 'move-right-org'}
           >
           View More
           </Button>
