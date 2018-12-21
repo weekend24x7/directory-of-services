@@ -337,14 +337,16 @@ class HomeSearch extends React.Component {
     return (
       <div className="org-home">
         <div className="org-home_title">
-          <h2> Search for projects in   <Button
+          <h2> Search for projects in
+            <Button
             aria-owns={anchorEl ? 'simple-menu' : null}
             aria-haspopup="true"
             onClick={this.handleClickx}
             className="menu"
           >
           all categories
-          </Button> </h2>
+          </Button>
+           </h2>
 
           <Menu
             id="simple-menu"
