@@ -44,7 +44,7 @@ function findOrganisationByLocation(orgs, userQuery) {
     .map(key => (
       location.map(item => {
         const isKeyValueNumber = typeof (org[key]) !== 'number';
-        const isQueryHasMatch  = isKeyValueNumber ? org[key].toLowerCase().includes(item.toLowerCase()): null;
+        const isQueryHasMatch  = isKeyValueNumber && org[key] !== null &&  org[key].toLowerCase().includes(item.toLowerCase())
         if (isQueryHasMatch &&
           (key === 'borough' || key === 'area') &&
           org[key].toLowerCase().includes(item.toLowerCase())) {
