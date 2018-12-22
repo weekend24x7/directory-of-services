@@ -82,7 +82,7 @@ const SignUpFields = props => {
       <TextField
         placeholder="Confirm Password"
         label="Confirm Password"
-        name="password"
+        name="passwordConfirm"
         autoComplete="password"
         className={classes.textField}
         type="password"
