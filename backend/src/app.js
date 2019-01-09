@@ -7,6 +7,7 @@ import compression from 'compression'
 import cors from 'cors';
 import service from './routes/api';
 import users from './routes/users';
+import status from './routes/status';
 
 const app = express()
   .use(methodOverride())
@@ -16,11 +17,10 @@ const app = express()
   .use(compression())
   .use(passport.initialize())
   .use(passport.session())
-  .use(cors());
-
-app.use('/api', users)
-  .use('/api/service', service);
-
+  .use(cors())
+  .use('/api', users)
+  .use('/api/service', service)
+  .use('/_health', status);
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
   const err = new Error('Not Found');
