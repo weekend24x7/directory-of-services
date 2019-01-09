@@ -8,6 +8,7 @@ import EditOrganisation from './EditOrganisation';
 import Notification from '../Users/Notification'
 import './single-org.css';
 
+
 class SingleOrganisation extends Component {
   state = {
     open: false
@@ -34,13 +35,13 @@ class SingleOrganisation extends Component {
             onClick={this.handleOpen}
             variant="raised"
             size="small"
-            className='move-right'
+            className={window.location.href.indexOf('home') !== -1  ? 'move-right-home-hidden' : 'move-right-org-hidden'}
           />
           <Button
             onClick={this.handleOpen}
             variant="raised"
             size="small"
-            className='move-right-btn'
+            className={window.location.href.indexOf('home') !== -1  ? 'move-right-home' : 'move-right-org'}
           >
           View More
           </Button>
