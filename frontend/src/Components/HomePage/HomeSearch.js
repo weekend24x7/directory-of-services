@@ -62,7 +62,8 @@ class HomeSearch extends React.Component {
     categoriesToFilter: [],
     fillterdOrganisations: [],
     anchorEl: null,
-    noResult: ''
+    noResult: '',
+    numberOfOrg:5
   };
 
   componentWillReceiveProps(newProps) {
@@ -175,6 +176,12 @@ class HomeSearch extends React.Component {
     });
   };
 
+  handleUpdateOrgNumber = () => {
+    setTimeout(() => {
+      this.setState({ numberOfOrg: this.state.numberOfOrg+5 });
+    }, 500);
+    this.updateSearchData()
+  }
   handlePostSearch = async () => {
     if (this.state.postCode.length === 0) {
       return null;
@@ -267,7 +274,7 @@ class HomeSearch extends React.Component {
       Educ,
       Debt,
       Youn,
-      Traf, Wome, Ment, anchorEl } = this.state;
+      Traf, Wome, Ment, anchorEl, numberOfOrg } = this.state;
     const { role } = this.props;
     let { organisations } = this.state
     const { editIdx, search, postcodeValue, fillterdOrganisations } = this.state;
@@ -286,7 +293,7 @@ class HomeSearch extends React.Component {
     const searchResult = homePageHelper
       .filterData(organisations.sort(this.dataOrder()), search, postcodeValue)
 
-    const finalSearchResult = searchResult.map((org, index) => {
+    const finalSearchResult = searchResult.slice(0,numberOfOrg).map((org, index) => {
       const currentlyEditing = editIdx === index;
 
 
@@ -603,6 +610,18 @@ class HomeSearch extends React.Component {
             </div>
           ) : (
               finalSearchResult
+            )}
+          {finalSearchResult.length < 5 ? (
+            null
+          ) : (
+            <Button
+              aria-owns={anchorEl ? 'simple-menu' : null}
+              aria-haspopup="true"
+              onClick={this.handleUpdateOrgNumber}
+              className="show-more"
+            >
+              SHOW MORE
+            </Button>
             )}
         </Grid>
       </div>
