@@ -301,19 +301,17 @@ class HomeSearch extends React.Component {
         </Fragment>
       ) : (
 
-          <Grid item xs={12} sm={6} key={org.id}>
-            <OrganisationCard
-              getData={() => this.editSelectedOrganisation(index)}
-              org={org}
-              index={index}
-              isHomeRoute={isHomeRoute}
-              role={role}
-            />
-          </Grid>
+        <Grid item xs={12} sm={6} key={org.id}>
+          <OrganisationCard
+            getData={() => this.editSelectedOrganisation(index)}
+            org={org}
+            index={index}
+            isHomeRoute={isHomeRoute}
+            role={role}
+          />
+        </Grid>
         );
     });
-    { console.log(finalSearchResult.length) }
-    { noResultFound = searchResult.length === 0 }
     if (
       this.props.match.url.includes('/users') ||
       this.props.match.url.includes('/admindos') ||
