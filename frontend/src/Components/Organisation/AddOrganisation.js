@@ -193,7 +193,6 @@ class AddOrganisation extends Component {
             onClick={event => this.handleSubmit(event)}
             color="primary"
             size="small"
-            autoFocus
           >
             SAVE CHANGES
           </Button>

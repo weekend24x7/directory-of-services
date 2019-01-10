@@ -29,6 +29,22 @@ function renderInput(inputProps) {
   );
 }
 
+function renderInputx(inputProps) {
+  const { classes, ref, ...other } = inputProps;
+  return (
+    <TextField
+      fullWidth
+      inputRef={ref}
+      InputProps={{
+        classes: {
+          input: classes.input
+        },
+        ...other
+      }}
+    />
+  );
+}
+
 // Render the suggestion values when user type into home page search field
 function renderMainSearchSuggestion(suggestion, { query, isHighlighted }) {
   const matches = match(
@@ -83,9 +99,44 @@ function renderSuggestion(organisation, { query, isHighlighted }) {
     </MenuItem>
   );
 }
+function renderSuggestionx(organisation, { query, isHighlighted }) {
+  const matches = match(organisation.postCode, query);
+  const parts = parse(organisation.postCode, matches);
+
+  return (
+    <MenuItem selected={isHighlighted} component="div">
+      <div>
+        {parts.map(
+          (part, index) =>
+            part.highlight ? (
+              <span key={String(index)} style={{ fontWeight: 300 }}>
+                {part.text}
+              </span>
+            ) : (
+              <strong key={String(index)} style={{ fontWeight: 500 }}>
+                {part.text}
+              </strong>
+            )
+        )}
+      </div>
+    </MenuItem>
+  );
+}
 
 // suggestion address container
 function renderSuggestionsContainer(options) {
+  const { containerProps, children } = options;
+  return (
+    <Paper
+      style={{ minHeight: 0, maxHeight: 300, overflowY: "auto" }}
+      {...containerProps}
+      square
+    >
+      {children}
+    </Paper>
+  );
+}
+function renderSuggestionsContainerx(options) {
   const { containerProps, children } = options;
   return (
     <Paper
@@ -107,6 +158,10 @@ function getMainSearchSuggestionValue(suggestion) {
 function getSuggestionValue(orgainsation) {
   return `${orgainsation.postCode}`;
 }
+function getSuggestionValuex(orgainsation) {
+  return `${orgainsation.postCode}`;
+}
+
 
 // Get main search suggestion valuses
 function getMainSearchSuggestions(value, suggestions) {
@@ -273,6 +328,7 @@ function displayCategoryNameWithSpace(categoriesData, category) {
 
 export default {
   renderInput,
+  renderInputx,
   renderSuggestion,
   renderSuggestionsContainer,
   renderMainSearchSuggestion,
@@ -289,5 +345,9 @@ export default {
   getMainSearchSuggestions,
   errorParser,
   isAlphaNumeric,
-  displayCategoryNameWithSpace
+  displayCategoryNameWithSpace,
+  renderSuggestionsContainerx,
+  getSuggestionValuex,
+  renderSuggestionx,
+  
 };

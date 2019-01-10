@@ -27,7 +27,8 @@ module.exports = {
     'react/no-did-mount-set-state': 'off',
     'no-underscore-dangle': 'off',
     'object-shorthand':'off',
-    'no-nested-ternary': 'off'
+    'no-nested-ternary': 'off',
+    'no-restricted-syntax': 'off'
   },
   settings: {
     'import/resolver': {

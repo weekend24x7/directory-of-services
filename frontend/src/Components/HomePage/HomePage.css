@@ -14,8 +14,8 @@
   font-size: 84%;
 }
 
-.org-home_title a { 
-  text-decoration: none; 
+.org-home_title a {
+  text-decoration: none;
   color: rgb(0, 188, 212)
 }
 
@@ -40,6 +40,65 @@ form div div::before {
   border-radius: 4px;
   color: rgba(50, 49, 49, 0.9);
   font-weight: 600;
+}
+
+
+
+
+.move-right-org{
+  top: -30px !important ;
+  right: 0 !important;
+  left: 43% !important;
+  background: #ffffff !important;
+  box-shadow: none !important;
+  color:  #1abcd4 !important;
+  padding: 0px 8px !important;
+ }
+
+
+ .move-right-home-hidden,  .move-right-org-hidden{
+   padding: 82px 263px !important;
+   background:transparent !important;
+   box-shadow: none !important;
+ }
+
+ .move-right-home{
+  top: -20px !important ;
+  right: 0 !important;
+  left: 43% !important;
+  background: #ffffff !important;
+  box-shadow: none !important;
+  color:  #1abcd4 !important;
+  padding: 0px 8px !important;
+ }
+
+
+
+div.org-home_title  > h2 > button{
+  color: rgb(26, 188, 212);
+   font-size: 23px;
+  margin-block-start: 0.83em;
+  margin-block-end: 0.83em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  font-weight: bold;
+  /* top: -4vw;
+  right: 4vw; */
+}
+
+.fieldControl{
+   padding: 20px !important;
+ }
+
+
+ div.org-home_title  > h2 > button::after{
+  content: "";
+  height:0px;
+  width:0px;
+  border:none;
+  border-top:5px solid #000000;
+  border-left:5px solid rgba(0,0,0,0);
+  border-right:5px solid rgba(0,0,0,0);
 }
 
 /*  Home search title  */
@@ -112,11 +171,7 @@ i{ cursor: pointer;}
   top: 0;
 }
 
-div.org-home .org-card-info .org-detail-btn button {
-  top: 9.1rem;
-  right: 0;
-  left: 43%;
-}
+
 
 .clear-postcode i {
   right: 0px;
@@ -142,7 +197,7 @@ div.org-home .org-card-info .edit-button {
 
 .home-btn-search button.btn-search,
 .home-btn-search button.btn-search:hover {
-  background: #1abcd4; 
+  background: #1abcd4;
   border: .5px solid rgb(26, 188, 212);
   padding: 15px;
   width: 100%;

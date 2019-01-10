@@ -42,4 +42,3 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE)(LI
 ## Acknowledgments
 
 * Code Your Future mentors and students
-

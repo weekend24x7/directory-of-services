@@ -110,5 +110,5 @@ function SearchForm(props){
 SearchForm.propTypes = {
     classes: PropTypes.object.isRequired,
 };
-  
+
 export default withStyles(styles)(SearchForm);
