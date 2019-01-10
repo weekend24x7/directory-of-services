@@ -11,7 +11,7 @@ import {
   FormGroup,
   FormHelperText,
   FormLabel,
-Menu
+  Menu
 } from 'material-ui';
 import { withRouter, Link } from 'react-router-dom';
 import EditOrganisation from '../Organisation/EditOrganisation';
@@ -49,19 +49,20 @@ class HomeSearch extends React.Component {
     Empl: false,
     Baby: false,
     Dest: false,
-    Fami:false,
-    Gend:false,
-    LGBT:false,
-    Soci:false,
-    Educ:false,
-    Debt:false,
-    Youn:false,
-    Traf:false,
-    Wome:false,
-    Ment:false,
+    Fami: false,
+    Gend: false,
+    LGBT: false,
+    Soci: false,
+    Educ: false,
+    Debt: false,
+    Youn: false,
+    Traf: false,
+    Wome: false,
+    Ment: false,
     categoriesToFilter: [],
-    fillterdOrganisations:[],
-    anchorEl: null
+    fillterdOrganisations: [],
+    anchorEl: null,
+    noResult: ''
   };
 
   componentWillReceiveProps(newProps) {
@@ -72,7 +73,7 @@ class HomeSearch extends React.Component {
     });
   }
 
-  handleClickx = event => {
+  handleClickBar = event => {
     this.setState({ anchorEl: event.currentTarget });
   };
 
@@ -97,6 +98,7 @@ class HomeSearch extends React.Component {
         (this.state.postCode.trim().length !== 0 &&
           this.state.value.trim().length === 0)
       ) {
+        this.setState({ noResult: 'No Result Found' })
         this.updateSearchData();
       }
     }
@@ -119,35 +121,35 @@ class HomeSearch extends React.Component {
     this.setState({ value: newValue, isHidden: false });
   };
   handleCheck = name => event => {
-      this.setState({ [name]: event.target.checked });
-      const { categoriesToFilter, organisations } = this.state;
-      const indexToRemove = categoriesToFilter.indexOf(name);
-      if (indexToRemove > -1) {
-        // item found if > -1
-        // it means user unchecked again!
-        categoriesToFilter.splice(indexToRemove, 1); // if unchecked remove the category
-      } else {
-        categoriesToFilter.push(name); // add if checked first time
-      }
-      const fillterdOrganisations =
-        categoriesToFilter.length === 0 ? organisations : [];
-      if (categoriesToFilter.length > 0) {
-        for (const organisation of organisations) {
-          for (const organisationToFilter of categoriesToFilter) {
-            if (organisation.cat_name.substring(0,4) === organisationToFilter) {
-              fillterdOrganisations.push(organisation);
-            }
+    this.setState({ [name]: event.target.checked });
+    const { categoriesToFilter, organisations } = this.state;
+    const indexToRemove = categoriesToFilter.indexOf(name);
+    if (indexToRemove > -1) {
+      // item found if > -1
+      // it means user unchecked again!
+      categoriesToFilter.splice(indexToRemove, 1); // if unchecked remove the category
+    } else {
+      categoriesToFilter.push(name); // add if checked first time
+    }
+    const fillterdOrganisations =
+      categoriesToFilter.length === 0 ? organisations : [];
+    if (categoriesToFilter.length > 0) {
+      for (const organisation of organisations) {
+        for (const organisationToFilter of categoriesToFilter) {
+          if (organisation.cat_name.substring(0, 4) === organisationToFilter) {
+            fillterdOrganisations.push(organisation);
           }
         }
       }
-      this.setState({ fillterdOrganisations, categoriesToFilter});
-      if (categoriesToFilter.length === 0){
-        this.setState({  AllCat:true});
-      }
-      else {
-        this.setState({  AllCat:false});
-      }
-    };
+    }
+    this.setState({ fillterdOrganisations, categoriesToFilter });
+    if (categoriesToFilter.length === 0) {
+      this.setState({ AllCat: true });
+    }
+    else {
+      this.setState({ AllCat: false });
+    }
+  };
 
   editSelectedOrganisation = idex => this.setState({ editIdx: idex });
 
@@ -257,7 +259,7 @@ class HomeSearch extends React.Component {
   };
 
   render() {
-    const { AllCat, Hous, Immi, Bene,  Heal, Empl, Baby , Dest,
+    const { AllCat, Hous, Immi, Bene, Heal, Empl, Baby, Dest,
       Fami,
       Gend,
       LGBT,
@@ -265,16 +267,15 @@ class HomeSearch extends React.Component {
       Educ,
       Debt,
       Youn,
-      Traf,Wome, Ment,  anchorEl} = this.state;
+      Traf, Wome, Ment, anchorEl } = this.state;
     const { role } = this.props;
-    let {organisations} = this.state
+    let { organisations } = this.state
     const { editIdx, search, postcodeValue, fillterdOrganisations } = this.state;
-    if(fillterdOrganisations.length > 0){
+    if (fillterdOrganisations.length > 0) {
       organisations = fillterdOrganisations
     }
     const params = this.props.location.pathname;
     const isHomeRoute = params && params.includes('home');
-
     if (
       this.state.isLoading ||
       homePageHelper.filterData.length === 0 ||
@@ -284,18 +285,22 @@ class HomeSearch extends React.Component {
     }
     const searchResult = homePageHelper
       .filterData(organisations.sort(this.dataOrder()), search, postcodeValue)
-      .map((org, index) => {
-        const currentlyEditing = editIdx === index;
-        return currentlyEditing ? (
-          <Fragment>
-            <EditOrganisation stopEditing={this.stopEditing} org={org} show />
-            <SingleOrganisation
-              stopEditing={this.stopEditing}
-              handleShawDetails
-              org={org}
-            />
-          </Fragment>
-        ) : (
+
+    const finalSearchResult = searchResult.map((org, index) => {
+      const currentlyEditing = editIdx === index;
+
+
+      return currentlyEditing ? (
+        <Fragment>
+          <EditOrganisation stopEditing={this.stopEditing} org={org} show />
+          <SingleOrganisation
+            stopEditing={this.stopEditing}
+            handleShawDetails
+            org={org}
+          />
+        </Fragment>
+      ) : (
+
           <Grid item xs={12} sm={6} key={org.id}>
             <OrganisationCard
               getData={() => this.editSelectedOrganisation(index)}
@@ -306,7 +311,9 @@ class HomeSearch extends React.Component {
             />
           </Grid>
         );
-      });
+    });
+    { console.log(finalSearchResult.length) }
+    { noResultFound = searchResult.length === 0 }
     if (
       this.props.match.url.includes('/users') ||
       this.props.match.url.includes('/admindos') ||
@@ -341,10 +348,10 @@ class HomeSearch extends React.Component {
             <Button
               aria-owns={anchorEl ? 'simple-menu' : null}
               aria-haspopup="true"
-              onClick={this.handleClickx}
+              onClick={this.handleClickBar}
               className="menu"
             >
-          all categories
+              all categories
             </Button>
           </h2>
 
@@ -364,7 +371,7 @@ class HomeSearch extends React.Component {
                       onChange={this.handleCheck('AllCat')}
                       value="AllCat"
                     />
-                }
+                  }
                   label="All Categories"
                 />
                 <FormControlLabel
@@ -374,7 +381,7 @@ class HomeSearch extends React.Component {
                       onChange={this.handleCheck('Empl')}
                       value="Empl"
                     />
-                }
+                  }
                   label="Employment"
                 />
                 <FormControlLabel
@@ -384,7 +391,7 @@ class HomeSearch extends React.Component {
                       onChange={this.handleCheck('Hous')}
                       value="Hous"
                     />
-                }
+                  }
                   label="Housing"
                 />
                 <FormControlLabel
@@ -394,7 +401,7 @@ class HomeSearch extends React.Component {
                       onChange={this.handleCheck('Immi')}
                       value="Immi"
                     />
-                }
+                  }
                   label="Immigration"
                 />
                 <FormControlLabel
@@ -404,7 +411,7 @@ class HomeSearch extends React.Component {
                       onChange={this.handleCheck('Bene')}
                       value="Bene"
                     />
-                }
+                  }
                   label="Benefits"
                 />
                 <FormControlLabel
@@ -414,7 +421,7 @@ class HomeSearch extends React.Component {
                       onChange={this.handleCheck('Heal')}
                       value="Heal"
                     />
-              }
+                  }
                   label="Healthcare"
                 />
                 <FormControlLabel
@@ -424,7 +431,7 @@ class HomeSearch extends React.Component {
                       onChange={this.handleCheck('Baby')}
                       value="Baby"
                     />
-              }
+                  }
                   label="Baby"
                 />
                 <FormControlLabel
@@ -434,7 +441,7 @@ class HomeSearch extends React.Component {
                       onChange={this.handleCheck('Dest')}
                       value="Dest"
                     />
-              }
+                  }
                   label="Destitution"
                 />
                 <FormControlLabel
@@ -444,7 +451,7 @@ class HomeSearch extends React.Component {
                       onChange={this.handleCheck('Fami')}
                       value="Fami"
                     />
-              }
+                  }
                   label="Family"
                 />
                 <FormControlLabel
@@ -454,7 +461,7 @@ class HomeSearch extends React.Component {
                       onChange={this.handleCheck('Gend')}
                       value="Gend"
                     />
-              }
+                  }
                   label="Gendoyment"
                 />
                 <FormControlLabel
@@ -464,7 +471,7 @@ class HomeSearch extends React.Component {
                       onChange={this.handleCheck('LGBT')}
                       value="LGBT"
                     />
-              }
+                  }
                   label="LGBTQ"
                 />
                 <FormControlLabel
@@ -474,7 +481,7 @@ class HomeSearch extends React.Component {
                       onChange={this.handleCheck('Soci')}
                       value="Soci"
                     />
-              }
+                  }
                   label="Social And Other"
                 />
                 <FormControlLabel
@@ -484,7 +491,7 @@ class HomeSearch extends React.Component {
                       onChange={this.handleCheck('Educ')}
                       value="Educ"
                     />
-              }
+                  }
                   label="Education"
                 />
                 <FormControlLabel
@@ -494,7 +501,7 @@ class HomeSearch extends React.Component {
                       onChange={this.handleCheck('Debt')}
                       value="Debt"
                     />
-              }
+                  }
                   label="Debt"
                 />
                 <FormControlLabel
@@ -504,7 +511,7 @@ class HomeSearch extends React.Component {
                       onChange={this.handleCheck('Youn')}
                       value="Youn"
                     />
-              }
+                  }
                   label="Young People And Children"
                 />
                 <FormControlLabel
@@ -514,7 +521,7 @@ class HomeSearch extends React.Component {
                       onChange={this.handleCheck('Traf')}
                       value="Traf"
                     />
-              }
+                  }
                   label="Trafficking"
                 />
                 <FormControlLabel
@@ -524,7 +531,7 @@ class HomeSearch extends React.Component {
                       onChange={this.handleCheck('Wome')}
                       value="Wome"
                     />
-              }
+                  }
                   label="Women"
                 />
                 <FormControlLabel
@@ -534,7 +541,7 @@ class HomeSearch extends React.Component {
                       onChange={this.handleCheck('Ment')}
                       value="Ment"
                     />
-              }
+                  }
                   label="Mental Health Service"
                 />
 
@@ -587,8 +594,18 @@ class HomeSearch extends React.Component {
           {this.state.postcodeError ? (
             <span className="postcode-error">{this.state.postcodeError}</span>
           ) : (
-            searchResult
-          )}
+              finalSearchResult
+            )}
+          {this.state.noResult && finalSearchResult.length === 0 ? (
+            <div className="bug-form">
+              <h4>{this.state.noResult} </h4>
+              <p>
+                Please try again.
+              </p>
+            </div>
+          ) : (
+              finalSearchResult
+            )}
         </Grid>
       </div>
     );
