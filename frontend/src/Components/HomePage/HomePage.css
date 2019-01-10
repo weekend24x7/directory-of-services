@@ -222,12 +222,16 @@ div.org-home .org-card-info .edit-button {
 
 /* Bug form */
 
-.bug-form {
+.bug-form, .no-result {
   display: grid;
   margin-top: 2rem;
   grid-gap: .8rem;
   padding: 1rem;
 }
+.no-result{
+  color: red;
+}
+
 
 .bug-form a {
   text-decoration: none;

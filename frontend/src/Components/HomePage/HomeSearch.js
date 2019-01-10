@@ -595,7 +595,7 @@ class HomeSearch extends React.Component {
               finalSearchResult
             )}
           {this.state.noResult && finalSearchResult.length === 0 ? (
-            <div className="bug-form">
+            <div className="no-result">
               <h4>{this.state.noResult} </h4>
               <p>
                 Please try again.
